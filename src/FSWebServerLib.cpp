@@ -619,12 +619,11 @@ void AsyncFSWebServer::configureWifi() {
   }else{
     Serial.print(F("FAILED TO JOIN ACCESS POINT: "));        
     Serial.println(_config.ssid);
-    Serial.print(F("IF WRONG DETAILS, START IN AP MODE: D6 HELD LOW")); 
+    Serial.println(F("IF WRONG DETAILS, START IN AP MODE: D6 HELD LOW")); 
     Serial.print(F("THEN BROWSE AND ENTER CORRECT DETAILS: http://"));
     Serial.print(_config.deviceName);
     Serial.println(F(".local/config.html"));      
   }
-
 }
 
 void AsyncFSWebServer::ConfigureOTA(String password) {
@@ -779,6 +778,8 @@ bool AsyncFSWebServer::handleFileRead(String path, AsyncWebServerRequest *reques
 		DEBUGLOG("File %s exist\r\n", path.c_str());
 		request->send(response);
 		DEBUGLOG("File %s Sent\r\n", path.c_str());
+		Serial.print("[GET] ");
+		Serial.println(path.c_str());
 
 		return true;
 	}
@@ -803,6 +804,8 @@ void AsyncFSWebServer::handleFileCreate(AsyncWebServerRequest *request) {
 		file.close();
 	else
 		return request->send(500, "text/plain", "CREATE FAILED");
+		Serial.print("[CREATE] ");
+		Serial.println(path);
 	request->send(200, "text/plain", "");
 	path = String(); // Remove? Useless statement?
 }
@@ -818,6 +821,8 @@ void AsyncFSWebServer::handleFileDelete(AsyncWebServerRequest *request) {
 	if (!_fs->exists(path))
 		return request->send(404, "text/plain", "FileNotFound");
 	_fs->remove(path);
+		Serial.print("[DELETE] ");
+		Serial.println(path);
 	request->send(200, "text/plain", "");
 	path = String(); // Remove? Useless statement?
 }
@@ -851,6 +856,8 @@ void AsyncFSWebServer::handleFileUpload(AsyncWebServerRequest *request, String f
 			fsUploadFile.close();
 		}
 		DEBUGLOG("handleFileUpload Size: %u\n", fileSize);
+		Serial.print("[POST] ");
+		Serial.println(filename);
 		fileSize = 0;
 	}
 }
