@@ -31,8 +31,8 @@
 #define DEBUGLOG(...)
 #endif
 
-#define CONNECTION_LED 2 // Connection LED pin (Built in). -1 to disable
-#define AP_ENABLE_BUTTON 4 // Button pin to enable AP during startup for configuration. -1 to disable
+#define CONNECTION_LED D8 // Connection LED pin (Built in). -1 to disable
+#define AP_ENABLE_BUTTON D6 // Button pin to enable AP during startup for configuration. -1 to disable
 
 // #define HIDE_CONFIG
 #define CONFIG_FILE "/config.json"
@@ -60,7 +60,7 @@ typedef struct {
 } strConfig;
 
 typedef struct {
-    String APssid = "ESP"; // ChipID is appended to this name
+    String APssid = "ASSIM"; // ChipID is appended to this name
     String APpassword = "12345678";
     bool APenable = false; // AP disabled by default
 } strApConfig;

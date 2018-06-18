@@ -87,7 +87,7 @@ void flashLED(int pin, int times, int delayTime) {
 
 void AsyncFSWebServer::begin(FS* fs) {
 	_fs = fs;
-	DBG_OUTPUT_PORT.begin(115200);
+//	DBG_OUTPUT_PORT.begin(115200);
 	DBG_OUTPUT_PORT.print("\n\n");
 #ifndef RELEASE
 	DBG_OUTPUT_PORT.setDebugOutput(true);
@@ -147,7 +147,6 @@ void AsyncFSWebServer::begin(FS* fs) {
 	onStationModeGotIPHandler = WiFi.onStationModeGotIP([this](WiFiEventStationModeGotIP data) {
 		this->onWiFiConnectedGotIP(data);
 	});
-
 
 	WiFi.hostname(_config.deviceName.c_str());
 	if (AP_ENABLE_BUTTON >= 0) {
@@ -561,16 +560,32 @@ void AsyncFSWebServer::configureWifiAP() {
 	DEBUGLOG(__PRETTY_FUNCTION__);
 	DEBUGLOG("\r\n");
 	//WiFi.disconnect();
+	bool success = false;
 	WiFi.mode(WIFI_AP);
 	String APname = _apConfig.APssid + (String)ESP.getChipId();
 	if (_httpAuth.auth) {
-		WiFi.softAP(APname.c_str(), _httpAuth.wwwPassword.c_str());
+		success = WiFi.softAP(APname.c_str(), _httpAuth.wwwPassword.c_str());
 		DEBUGLOG("AP Pass enabled: %s\r\n", _httpAuth.wwwPassword.c_str());
 	}
 	else {
-		WiFi.softAP(APname.c_str());
+		success = WiFi.softAP(APname.c_str());
 		DEBUGLOG("AP Pass disabled\r\n");
 	}
+	DBG_OUTPUT_PORT.begin(115200);
+	delay(2000);
+	Serial.println();
+	Serial.println();
+	if (success){
+		Serial.print(F("CONNECT TO ACCESS POINT: "));    
+		Serial.println(APname.c_str());
+		Serial.print(F("THEN BROWSE: http://"));
+		Serial.print(_config.deviceName);
+		Serial.println(F(".local/admin"));
+	  }else{
+		Serial.print(F("FAILED TO SETUP ACCESS POINT: "));        
+		Serial.println(APname.c_str());
+	  }
+
 	if (CONNECTION_LED >= 0) {
 		flashLED(CONNECTION_LED, 3, 250);
 	}
@@ -585,17 +600,30 @@ void AsyncFSWebServer::configureWifi() {
 	//encourge clean recovery after disconnect species5618, 08-March-2018
 	WiFi.setAutoReconnect(true);
 	WiFi.mode(WIFI_STA);
-
-	
 	DBG_OUTPUT_PORT.printf("Connecting to %s\r\n", _config.ssid.c_str());
 	WiFi.begin(_config.ssid.c_str(), _config.password.c_str());
 	if (!_config.dhcp) {
 		DEBUGLOG("NO DHCP\r\n");
 		WiFi.config(_config.ip, _config.gateway, _config.netmask, _config.dns);
 	}
-
-	WiFi.waitForConnectResult();
-
+	int status = WiFi.waitForConnectResult();
+	DBG_OUTPUT_PORT.begin(115200);
+	Serial.println();
+	Serial.println();
+  if (status == WL_CONNECTED){
+    Serial.print(F("CONNECTED TO ACCESS POINT: "));    
+    Serial.println(_config.ssid);
+    Serial.print(F("CAN BROWSE http://"));
+    Serial.print(_config.deviceName);
+    Serial.println(F(".local/admin"));
+  }else{
+    Serial.print(F("FAILED TO JOIN ACCESS POINT: "));        
+    Serial.println(_config.ssid);
+    Serial.print(F("IF WRONG DETAILS, START IN AP MODE: D6 HELD LOW")); 
+    Serial.print(F("THEN BROWSE AND ENTER CORRECT DETAILS: http://"));
+    Serial.print(_config.deviceName);
+    Serial.println(F(".local/config.html"));      
+  }
 
 }
 

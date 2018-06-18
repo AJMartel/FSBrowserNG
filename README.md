@@ -1,4 +1,4 @@
-**Notice**: I (IOT-123) have forked this for fairly focussed customizations for the ASSIMILATE IOT NETWORK (D1 Mini). These customizations (callbacks, and extra config editing) may be of some use, but the motivation is _not_ to provide a general purpose library.
+**Notice**: I (IOT-123) have forked this for fairly focussed customizations for the ASSIMILATE IOT NETWORK (D1 Mini). These customizations (sanitize serial output, remove broken features, and extra config editing) may be of some use, but the motivation is _not_ to provide a general purpose library.
 
 **Notice**: I (gmag11) do not have the free time to go on developing this project. If you would like to continue with it feel free to make your own fork or ask to be a collaborator. Please understand that I do need time for my job and my family :).
 
